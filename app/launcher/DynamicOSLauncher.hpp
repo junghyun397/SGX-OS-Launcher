@@ -2,7 +2,7 @@
 #define SGX_OS_LAUNCHER_DYNAMICOSLAUNCHER_HPP
 
 class DynamicOSLauncher: public IOSLauncher {
-    bool launchOsByBinImage(char * image) {
+    bool launchOsByBinImage(char * image) override {
         return false;
     }
 };

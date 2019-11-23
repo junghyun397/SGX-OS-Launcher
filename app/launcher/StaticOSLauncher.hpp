@@ -3,7 +3,7 @@
 
 class StaticOSLauncher: public IOSLauncher {
 public:
-    bool launchOsByBinImage(char * image) {
+    bool launchOsByBinImage(char * image) override {
         return false;
     }
 };
