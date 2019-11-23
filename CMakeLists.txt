@@ -3,4 +3,4 @@ project(SGX_OS_Launcher)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(SGX_OS_Launcher main.cpp)
+add_executable(SGX_OS_Launcher app/App.cpp)
