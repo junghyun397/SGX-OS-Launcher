@@ -1,12 +1,14 @@
 #ifndef SGX_OS_LAUNCHER_NETWORKAGENT_HPP
 #define SGX_OS_LAUNCHER_NETWORKAGENT_HPP
 
-class INetworkAgent {
-public:
-    virtual void* getConnection(uint32_t targetId) = 0;
-    virtual void closeConnection(void* connection) = 0;
+#include <stdint-gcc.h>
 
-    virtual void sendRequestOsImage(void* connection) = 0;
+class NetworkAgent {
+    explicit NetworkAgent(uint32_t destIP): destIP(destIP) {}
+private:
+    uint32_t destIP;
+public:
+    void sendBin(void *bin);
 };
 
 #endif //SGX_OS_LAUNCHER_NETWORKAGENT_HPP
