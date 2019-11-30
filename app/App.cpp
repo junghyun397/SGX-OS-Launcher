@@ -1,6 +1,6 @@
 #include <iostream>
-#include "launcher/IOSLauncher.hpp"
-#include "launcher/StaticOSLauncher.hpp"
+#include "launcher/os/IOSLauncher.hpp"
+#include "launcher/os/StaticOSLauncher.hpp"
 
 int main() {
     IOSLauncher* launcher = new StaticOSLauncher();

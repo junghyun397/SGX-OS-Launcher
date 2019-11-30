@@ -1,18 +1,43 @@
 cmake_minimum_required(VERSION 3.15)
 project(SGX_OS_Launcher)
 
-set(CMAKE_CXX_STANDARD 11)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+find_package(SGX REQUIRED)
 
-add_executable(SGX_OS_Launcher
-        app/launcher/IOSLauncher.hpp
-        app/launcher/StaticOSLauncher.hpp
-        app/launcher/StaticOSLauncher.cpp
-        app/launcher/DynamicOSLauncher.hpp
-        app/launcher/DynamicOSLauncher.cpp
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-        app/network/event/INetworkEventHandler.hpp
+set(EDL_SEARCH_PATHS Enclave enclave/trusted)
 
-        app/network/NetworkAgent.hpp
-        app/network/NetworkAgent.cpp
+set(E_SRCS enclave/Enclave.cpp)
 
-        app/App.cpp)
+set(T_SRCS enclave/trusted/LibDataManager.cpp)
+set(T_SRCS enclave/trusted/LibTLSManager.cpp)
+
+set(LDS Enclave/Enclave.lds)
+
+add_trusted_library(trusted_lib
+        SRCS ${T_SRCS}
+        EDL enclave/Enclave.edl
+        EDL_SEARCH_PATHS ${EDL_SEARCH_PATHS})
+
+add_enclave_library(enclave
+        SRCS ${E_SRCS}
+        TRUSTED_LIBS trusted_lib EDL enclave/Enclave.edl
+        EDL_SEARCH_PATHS ${EDL_SEARCH_PATHS}
+        LDSCRIPT ${LDS})
+
+enclave_sign(enclave
+        KEY Enclave/Enclave_private.pem
+        CONFIG Enclave/Enclave.config.xml)
+
+set(SRCS
+        app/App.cpp
+        app/trusted/LibDataManager.cpp
+        app/trusted/LibTLSManager.cpp)
+
+add_untrusted_executable(SGXOSLauncher
+        SRCS ${SRCS}
+        EDL enclave/Enclave.edl
+        EDL_SEARCH_PATHS ${EDL_SEARCH_PATHS})
+
+add_dependencies(SGXOSLauncher enclave-sign)
