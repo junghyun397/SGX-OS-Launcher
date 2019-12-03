@@ -1,3 +1,7 @@
  enclave.so
 {
+    global:
+        *;
+    local:
+        *;
 };

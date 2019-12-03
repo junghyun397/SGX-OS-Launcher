@@ -1,0 +1,6 @@
+enclave {
+
+    from "trusted/LibDataManager.edl" import *;
+    from "trusted/LibTLSManager.edl" import *;
+
+};

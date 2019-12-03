@@ -1,0 +1,6 @@
+enclave {
+    trusted {
+        public void ecall_connect_tls(void);
+        public void ecall_send_tls(void);
+    };
+};

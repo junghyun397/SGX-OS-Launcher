@@ -1,0 +1,6 @@
+enclave {
+    trusted {
+        public void ecall_save_enclave_data(void);
+        public void ecall_load_enclave_data(void);
+    };
+};

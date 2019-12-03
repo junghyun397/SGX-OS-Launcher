@@ -6,14 +6,15 @@ find_package(SGX REQUIRED)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(EDL_SEARCH_PATHS Enclave enclave/trusted)
+set(EDL_SEARCH_PATHS enclave enclave/trusted)
 
 set(E_SRCS enclave/Enclave.cpp)
 
-set(T_SRCS enclave/trusted/LibDataManager.cpp)
-set(T_SRCS enclave/trusted/LibTLSManager.cpp)
+set(T_SRCS
+        enclave/trusted/LibDataManager.cpp
+        enclave/trusted/LibTLSManager.cpp)
 
-set(LDS Enclave/Enclave.lds)
+set(LDS enclave/Enclave.lds)
 
 add_trusted_library(trusted_lib
         SRCS ${T_SRCS}
@@ -27,8 +28,8 @@ add_enclave_library(enclave
         LDSCRIPT ${LDS})
 
 enclave_sign(enclave
-        KEY Enclave/Enclave_private.pem
-        CONFIG Enclave/Enclave.config.xml)
+        KEY enclave/Enclave_private.pem
+        CONFIG enclave/Enclave.config.xml)
 
 set(SRCS
         app/App.cpp
