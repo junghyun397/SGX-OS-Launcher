@@ -2,7 +2,7 @@
 #define SGX_OS_LAUNCHER_ONLINELAUNCHER_HPP
 
 
-class OnlineLauncher {
+class OnlineLauncher: ILauncher {
 
 };
 

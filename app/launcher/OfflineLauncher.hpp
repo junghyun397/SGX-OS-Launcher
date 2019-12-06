@@ -2,7 +2,7 @@
 #define SGX_OS_LAUNCHER_OFFLINELAUNCHER_HPP
 
 
-class OfflineLauncher {
+class OfflineLauncher: ILauncher {
 
 };
 

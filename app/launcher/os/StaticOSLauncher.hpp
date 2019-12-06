@@ -5,7 +5,7 @@
 
 class StaticOSLauncher: public IOSLauncher {
 public:
-    bool launchOsByBinImage(char * image) override;
+    bool launchOsByBinImage(char* kernelImage, char * image) override;
 };
 
 #endif //SGX_OS_LAUNCHER_STATICOSLAUNCHER_HPP

@@ -1,5 +1,5 @@
 #include "StaticOSLauncher.hpp"
 
-bool StaticOSLauncher::launchOsByBinImage(char *image) {
+bool StaticOSLauncher::launchOsByBinImage(char* kernelImage, char* image) {
     return false;
 }

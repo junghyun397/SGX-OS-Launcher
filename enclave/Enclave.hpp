@@ -2,9 +2,4 @@
 #define SGX_OS_LAUNCHER_ENCLAVE_HPP
 
 
-class Enclave {
-
-};
-
-
 #endif //SGX_OS_LAUNCHER_ENCLAVE_HPP
