@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.12)
 project(SGX_OS_Launcher)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
@@ -9,10 +9,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(EDL_SEARCH_PATHS enclave enclave/trusted)
 
 set(E_SRCS enclave/Enclave.cpp)
-
-set(T_SRCS
-        enclave/trusted/LibDataManager.cpp
-        enclave/trusted/LibTLSManager.cpp)
 
 set(LDS enclave/Enclave.lds)
 
@@ -31,10 +27,7 @@ enclave_sign(enclave
         KEY enclave/Enclave_private.pem
         CONFIG enclave/Enclave.config.xml)
 
-set(SRCS
-        app/App.cpp
-        app/trusted/LibDataManager.cpp
-        app/trusted/LibTLSManager.cpp)
+set(SRCS app/App.cpp)
 
 add_untrusted_executable(SGXOSLauncher
         SRCS ${SRCS}
