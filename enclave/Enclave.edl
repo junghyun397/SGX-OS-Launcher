@@ -1,12 +1,11 @@
 enclave {
-	from "sgx_tae_service.edl" import *;
-    trusted {
-        public uint32_t create_sealed_os_storage([out, size=sealed_log_size] uint8_t* sealed_log, uint32_t sealed_log_size);
-        public uint32_t perform_sealed_os_storage([in, size=sealed_log_size] const uint8_t* sealed_log, uint32_t sealed_log_size);
-        public uint32_t update_sealed_os_storage([in,out, size=sealed_log_size] uint8_t* sealed_log, uint32_t sealed_log_size);
-        public uint32_t delete_sealed_os_storage([in, size=sealed_log_size] const uint8_t* sealed_log, uint32_t sealed_log_size);
+	from "sealing/OsSealing.edl" import *;
+	from "attestation/LocalAttestation.edl" import *;
 
-        public uint32_t create_timer_os_storage([out, size=sealed_log_size] uint8_t* sealed_log, uint32_t sealed_log_size);
-        public uint32_t perform_timer_os_storage([in, size=sealed_log_size] const uint8_t* sealed_log, uint32_t sealed_log_size);
+    trusted {
+    };
+
+    untrusted {
+         void ocall_print([in, string]const char* str);
     };
 };

@@ -1,0 +1,5 @@
+enclave {
+    trusted {
+        public sgx_status_t start_local_attestation_session([in, size=plaintext_len]uint8_t* plaintext, size_t plaintext_len, [out, size=sealed_size]sgx_sealed_data_t* sealed_data, size_t sealed_size);
+    };
+};
