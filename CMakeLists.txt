@@ -34,7 +34,7 @@ enclave_sign(enclave
         CONFIG ${CONFIG_FILE})
 
 add_untrusted_executable(SGXOSLauncher
-        SRCS app/App.cpp app/trusted/TrustedEnclaveUtil.cpp
+        SRCS app/App.cpp app/adaptor/TrustedEnclaveAdaptor.cpp
         USE_PREFIX
         EDL ${EDL_SRCS}
         EDL_SEARCH_PATHS ${EDL_SEARCH_PATHS})

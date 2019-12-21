@@ -1,5 +1,5 @@
-#ifndef SGX_OS_LAUNCHER_TRUSTEDENCLAVEUTIL_HPP
-#define SGX_OS_LAUNCHER_TRUSTEDENCLAVEUTIL_HPP
+#ifndef SGX_OS_LAUNCHER_TRUSTEDENCLAVEADAPTOR_HPP
+#define SGX_OS_LAUNCHER_TRUSTEDENCLAVEADAPTOR_HPP
 
 #include <string>
 
@@ -9,4 +9,4 @@ int initEnclave(sgx_enclave_id_t* eid, const std::string& launch_token_path, con
 
 bool isEcallSuccess(sgx_status_t sgx_status, const std::string& err_msg, sgx_status_t ecall_return_value = SGX_SUCCESS);
 
-#endif //SGX_OS_LAUNCHER_TRUSTEDENCLAVEUTIL_HPP
+#endif //SGX_OS_LAUNCHER_TRUSTEDENCLAVEADAPTOR_HPP

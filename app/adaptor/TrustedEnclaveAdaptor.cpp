@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cstring>
 #include "sgx_urts.h"
-#include "TrustedEnclaveUtil.hpp"
+#include "TrustedEnclaveAdaptor.hpp"
 
 void printEnclaveErrorMessage(sgx_status_t ret) {
     printf("ERROR: sgx error code: %d\n", ret);

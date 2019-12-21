@@ -1,10 +1,14 @@
 #include <iostream>
 #include <zconf.h>
+#include <wait.h>
 #include "Enclave_u.h"
-#include "trusted/TrustedEnclaveUtil.hpp"
+#include "adaptor/TrustedEnclaveAdaptor.hpp"
+#include "util/ShellExecutor.cpp"
 #include "launcher/StaticOSLauncher.cpp"
-#include "trusted/sealing/OsSealingAdaptor.cpp"
-#include "trusted/attestation/LocalAttestationAdaptor.cpp"
+#include "adaptor/sealing/OsSealingAdaptor.cpp"
+#include "adaptor/attestation/LocalAttestationAdaptor.cpp"
+
+bool debugFlag = true;
 
 sgx_enclave_id_t globalSGXEid = 0;
 
@@ -18,6 +22,10 @@ std::pair<std::string, int> parseArgs(int argc, char **args) {
 
 void failTo(const std::string& msg) {
     std::cout << "WARNING: fail to " << msg << "; enter ANY-KEY to try again, enter Ctrl+C to end program." << std::endl;
+    std::cin.ignore();
+}
+
+void next() {
     std::cin.ignore();
 }
 
@@ -39,35 +47,42 @@ int main(int argc, char** args) {
     while (initEnclave(&globalSGXEid, "enclave.token", "enclave.signed.so") < 0)
         failTo("initialize enclave.");
     std::cout << "INFO: succeed initialize local-enclave." << std::endl;
+    if (debugFlag) next();
 
     std::cout << "INFO: check local-sgx-storage..." << std::endl;
     auto osSealingAdaptor = new OsSealingAdaptor(globalSGXEid);
-    bool osReady = false;
-    if (!osReady) {
+    if (!osSealingAdaptor->isSealedDataExist()) {
         std::cout << "INFO: downloaded iot-os not found, download sequence needed." << std::endl;
         std::cout << "INFO: start ra-based download sequence..." << std::endl;
 
         std::cout << "INFO: run permission-setup-script..." << std::endl;
         system("../script/setup-permission.sh");
+        if (debugFlag) next();
 
         std::cout << "INFO: start running remote-attestation receiver process..." << std::endl;
-        system("../script/run-ra-process.sh");
-        std::cout << "INFO: succeed running remote-attestation receiver process." << std::endl;
+        auto executor = new ShellExecutor("../script/run-ra-process.sh");
+        executor->run();
+        std::cout << "INFO: wait for ra-process running..." << std::endl;
+        executor->waitFor("/tmp/ra-ready-sign");
+        if (debugFlag) next();
 
         std::cout << "INFO: start local-attestation process..." << std::endl;
         auto localAttestationAdaptor = new LocalAttestationAdaptor(globalSGXEid);
-        std::cout << "INFO: succeed local-attestation process." << std::endl;
 
-        // TODO: check OS version
-        std::cout << "INFO: receive OS-server-response, new OS version as " << "V" << "." << std::endl;
+        localAttestationAdaptor->startLocalAttestationSession();
+        auto transportedData = localAttestationAdaptor->getTransportedOsData();
+        std::cout << "INFO: succeed local-attestation process." << std::endl;
+        if (debugFlag) next();
 
         std::cout << "INFO: start save sgx-based storage..." << std::endl;
-        // TODO: save in sealed data
+        osSealingAdaptor->insertNewOs(transportedData);
         std::cout << "INFO: currently saved OS is up-to-date." << std::endl;
     }
 
+    if (debugFlag) next();
     std::cout << "INFO: start booting with downloaded OS, end SGX-OS-Launching sequence." << std::endl;
     auto osLauncher = new StaticOSLauncher();
-    osLauncher->launchOsByBinImage(nullptr, 100);
+    auto unsealedOsData = osSealingAdaptor->getSealedOs();
+    osLauncher->launchOsByBinImage(unsealedOsData);
     return 0;
 }

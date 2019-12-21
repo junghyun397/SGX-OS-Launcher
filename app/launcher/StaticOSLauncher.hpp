@@ -3,6 +3,7 @@
 
 #define SGX_DIR	"/tmp/sgx_dir"
 #define MNT_DIR "/tmp/sgx_dir/mnt"
+#define TMP_GZ_FD "/tmp/sgx_dir/nmt/os-packed-bin.gz"
 #define errExit(msg)	do { char msgout[500]; sprintf(msgout, "RAM-DISK-ERROR: %s:%s(%d)", msg, __FUNCTION__, __LINE__); perror(msgout); exit(1);} while (0)
 
 #include "IOSLauncher.hpp"
@@ -20,14 +21,12 @@
 
 class StaticOSLauncher: public IOSLauncher {
 public:
-    bool launchOsByBinImage(char* kernelImage, char *initrdImage, char *imageFd, uint32_t kernelSize) override;
+    bool launchOsByBinImage(packed_os_t packedOs) override;
 private:
-    bool createRamDisk(uint32_t allocateSize);
-    static bool pushOsInRamDisk(const char* kernelImage, const char *initrdImage, const char *imageFd);
-
-    static void execScript();
-
-    static void writeFile(const char* buffer, const char *fd);
+    void createRamDisk(uint32_t allocateSize);
+    static void pushBinRamDisk(packed_os_t packedOs, const char *imageFd);
+    static void extractGZFile(const char *fd);
+    static void execLaunchScript();
 
     int arg_debug = 1;
     int tmpfs_mounted = 0;

@@ -1,32 +1,32 @@
+#include <fstream>
 #include "StaticOSLauncher.hpp"
 
-bool StaticOSLauncher::launchOsByBinImage(char *kernelImage, char *initrdImage, char* imageFd, uint32_t kernelSize) {
-    createRamDisk(kernelSize);
-    pushOsInRamDisk(kernelImage, initrdImage, imageFd);
-    execScript();
-    return false;
-}
-
-bool StaticOSLauncher::createRamDisk(uint32_t allocateSize) {
-    fs_build_mnt_dir(allocateSize);
-    return false;
-}
-
-bool StaticOSLauncher::pushOsInRamDisk(const char *kernelImage, const char *initrdImage, const char *imageFd) {
-    auto kernelFd = std::string("/tmp/sgx_dir/mnt/vmlinuz-") + imageFd + "-generic";
-    auto initrdFd = std::string("/tmp/sgx_dir/mnt/initrd.img-") + imageFd + "-generic";
-    writeFile(kernelImage, kernelFd.c_str());
-    writeFile(initrdImage, initrdFd.c_str());
+bool StaticOSLauncher::launchOsByBinImage(packed_os_t packedOs) {
+    createRamDisk(packedOs.second);
+    pushBinRamDisk(packedOs, TMP_GZ_FD);
+    //extractGZFile(imageFd);
+    //execLaunchScript();
     return true;
 }
 
-void StaticOSLauncher::execScript() {
-    system("../script/run-os-launcher.sh");
+void StaticOSLauncher::createRamDisk(uint32_t allocateSize) {
+    fs_build_mnt_dir(allocateSize);
 }
 
-void StaticOSLauncher::writeFile(const char *buffer, const char *fd) {
-    FILE* pFile;
-    pFile = fopen(fd, "wb");
-    fwrite(buffer, 1, sizeof(buffer), pFile);
-    fclose(pFile);
+void StaticOSLauncher::pushBinRamDisk(packed_os_t packedOs, const char *imageFd) {
+    std::ofstream fout;
+    fout.open(imageFd, std::ios::out | std::ios::binary);
+    if (fout.is_open()) {
+        fout.write((const char*) packedOs.first, packedOs.second);
+        fout.close();
+    }
+}
+
+void StaticOSLauncher::extractGZFile(const char *fd) {
+    auto targetCmd = std::string("tar -xvf") + fd;
+    system(targetCmd.c_str());
+}
+
+void StaticOSLauncher::execLaunchScript() {
+    system("../script/launch-os.sh");
 }
