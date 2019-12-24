@@ -11,10 +11,12 @@ void *commandRoutine(void *argumentPointer) {
 
 void ShellExecutor::run() {
     pthread_t threadID;
-
     std::cout << "PTHREAD-EXE: create pthread..." << std::endl;
     pthread_create(&threadID, nullptr, commandRoutine, (void*)targetCommand);
 }
 
 void ShellExecutor::waitFor(const char *fd) {
+    while (access(fd, F_OK) == -1);
+    auto cmd = std::string("rm -f ") + fd;
+    system(cmd.c_str());
 }

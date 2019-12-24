@@ -25,8 +25,8 @@ void failTo(const std::string& msg) {
     std::cin.ignore();
 }
 
-void next() {
-    std::cin.ignore();
+void nextDelay(int time) {
+    sleep(time);
 }
 
 int main(int argc, char** args) {
@@ -47,9 +47,9 @@ int main(int argc, char** args) {
     while (initEnclave(&globalSGXEid, "enclave.token", "enclave.signed.so") < 0)
         failTo("initialize enclave.");
     std::cout << "INFO: succeed initialize local-enclave." << std::endl;
-    if (debugFlag) next();
 
     std::cout << "INFO: check local-sgx-storage..." << std::endl;
+    if (debugFlag) nextDelay(3);
     auto osSealingAdaptor = new OsSealingAdaptor(globalSGXEid);
     if (!osSealingAdaptor->isSealedDataExist()) {
         std::cout << "INFO: downloaded iot-os not found, download sequence needed." << std::endl;
@@ -57,29 +57,27 @@ int main(int argc, char** args) {
 
         std::cout << "INFO: run permission-setup-script..." << std::endl;
         system("../script/setup-permission.sh");
-        if (debugFlag) next();
 
         std::cout << "INFO: start running remote-attestation receiver process..." << std::endl;
         auto executor = new ShellExecutor("../script/run-ra-process.sh");
         executor->run();
         std::cout << "INFO: wait for ra-process running..." << std::endl;
-        executor->waitFor("/tmp/ra-ready-sign");
-        if (debugFlag) next();
+        executor->waitFor("/tmp/sgx-os-last/ra-code/new_firmware.zip");
 
         std::cout << "INFO: start local-attestation process..." << std::endl;
         auto localAttestationAdaptor = new LocalAttestationAdaptor(globalSGXEid);
+        if (debugFlag) nextDelay(2);
 
         localAttestationAdaptor->startLocalAttestationSession();
         auto transportedData = localAttestationAdaptor->getTransportedOsData();
         std::cout << "INFO: succeed local-attestation process." << std::endl;
-        if (debugFlag) next();
 
         std::cout << "INFO: start save sgx-based storage..." << std::endl;
         osSealingAdaptor->insertNewOs(transportedData);
+        if (debugFlag) nextDelay(3);
         std::cout << "INFO: currently saved OS is up-to-date." << std::endl;
     }
 
-    if (debugFlag) next();
     std::cout << "INFO: start booting with downloaded OS, end SGX-OS-Launching sequence." << std::endl;
     auto osLauncher = new StaticOSLauncher();
     auto unsealedOsData = osSealingAdaptor->getSealedOs();

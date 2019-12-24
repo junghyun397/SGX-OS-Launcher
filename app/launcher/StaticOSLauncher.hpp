@@ -3,7 +3,7 @@
 
 #define SGX_DIR	"/tmp/sgx_dir"
 #define MNT_DIR "/tmp/sgx_dir/mnt"
-#define TMP_GZ_FD "/tmp/sgx_dir/nmt/os-packed-bin.gz"
+#define TMP_GZ_FD "/tmp/sgx_dir/mnt/os-packed-bin.gz"
 #define errExit(msg)	do { char msgout[500]; sprintf(msgout, "RAM-DISK-ERROR: %s:%s(%d)", msg, __FUNCTION__, __LINE__); perror(msgout); exit(1);} while (0)
 
 #include "IOSLauncher.hpp"

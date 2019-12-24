@@ -3,9 +3,9 @@
 
 bool StaticOSLauncher::launchOsByBinImage(packed_os_t packedOs) {
     createRamDisk(packedOs.second);
-    pushBinRamDisk(packedOs, TMP_GZ_FD);
-    //extractGZFile(imageFd);
-    //execLaunchScript();
+    //pushBinRamDisk(packedOs, TMP_GZ_FD);
+    //extractGZFile(TMP_GZ_FD);
+    execLaunchScript();
     return true;
 }
 
@@ -23,10 +23,12 @@ void StaticOSLauncher::pushBinRamDisk(packed_os_t packedOs, const char *imageFd)
 }
 
 void StaticOSLauncher::extractGZFile(const char *fd) {
-    auto targetCmd = std::string("tar -xvf") + fd;
+    auto targetCmd = std::string("tar -xvf ") + fd + " -C " + MNT_DIR;
     system(targetCmd.c_str());
 }
 
 void StaticOSLauncher::execLaunchScript() {
-    system("../script/launch-os.sh");
+    system("sudo cp /tmp/pre/initrd.img-5.0.0-36-generic /tmp/sgx_dir/mnt");
+    system("sudo cp /tmp/pre/vmlinuz-5.0.0-36-generic /tmp/sgx_dir/mnt");
+    system("../script/launch-os.sh 5.0.0-36-generic");
 }

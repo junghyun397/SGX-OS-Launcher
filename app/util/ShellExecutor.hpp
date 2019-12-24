@@ -9,7 +9,7 @@ public:
 
     void run();
 
-    void waitFor(const char* fd);
+    static void waitFor(const char* fd);
 private:
     const char* targetCommand;
 };
