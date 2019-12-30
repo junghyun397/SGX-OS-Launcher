@@ -1,0 +1,3 @@
+[submodule "SGX-CMake"]
+	path = SGX-CMake
+	url = https://github.com/zhang-xin/SGX-CMake

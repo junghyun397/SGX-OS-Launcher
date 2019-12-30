@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 project(SGX_OS_Launcher)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/SGX-CMake/cmake)
 find_package(SGX REQUIRED)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
